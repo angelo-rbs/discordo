@@ -15,7 +15,7 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 ### Classes
 - [X] Usuario
-- [ ] Mensagem
+- [X] Mensagem
 - [ ] Canal 
 - [ ] CanalTexto
 - [ ] CanalVoz
