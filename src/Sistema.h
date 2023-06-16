@@ -6,8 +6,9 @@
 
 #include "Usuario.h"
 #include "Servidor.h"
+#include "../infra/Loggable.cpp"
 
-class Sistema {
+class Sistema : Loggable {
 
   private:
     std::vector<Usuario> usuarios;

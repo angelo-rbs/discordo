@@ -3,9 +3,11 @@
 
 #include <iostream>
 
+#include "../infra/Loggable.cpp"
+
 static int USUARIO_GLOBAL_ID = 1;
 
-class Usuario {
+class Usuario : Loggable {
 
   private:
     int id;

@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "../infra/Loggable.cpp"
+
 class Canal {
 
   private:

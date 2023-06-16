@@ -3,7 +3,8 @@
 
 #include <iostream>
 
-class Mensagem {
+#include "../infra/Loggable.cpp"
+class Mensagem : Loggable {
 
   private:
 
@@ -15,7 +16,7 @@ class Mensagem {
 
     // nao faz sentido criar uma mensagem vazia
 
-    Mensagem() = delete;  
+    Mensagem();  
     Mensagem(std::string dataHora, int enviadaPor, std::string conteudo);
 
     std::string getDataHora();

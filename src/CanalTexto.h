@@ -7,12 +7,13 @@
 #include "Canal.cpp"
 #include "Mensagem.cpp"
 
-class CanalTexto : Canal {
+class CanalTexto : Canal, Loggable {
 
   private:
     std::vector<Mensagem> mensagens;
 
   public:
+    CanalTexto();
     std::vector<Mensagem> getMensagens();
 };
 

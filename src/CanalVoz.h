@@ -3,12 +3,15 @@
 
 #include "Canal.cpp"
 #include "Mensagem.cpp"
-class CanalVoz : Canal {
+
+#include "../infra/Loggable.cpp"
+class CanalVoz : public Canal, public Loggable {
 
   private:
     Mensagem ultimaMensagem;
 
   public:
+    CanalVoz();
     Mensagem getUltimaMensagem();
 
 };
