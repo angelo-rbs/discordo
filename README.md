@@ -16,11 +16,11 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 ### Classes
 - [X] Usuario
 - [X] Mensagem
-- [ ] Canal 
-- [ ] CanalTexto
-- [ ] CanalVoz
-- [ ] Servidor
-- [ ] Sistema
+- [X] Canal 
+- [X] CanalTexto
+- [X] CanalVoz
+- [X] Servidor
+- [X] Sistema
 
 ### Funcionalidades (Parte 1)
 
