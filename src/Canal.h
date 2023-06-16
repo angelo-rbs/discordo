@@ -6,9 +6,13 @@
 class Canal {
 
   private:
+    std::string nome;
 
   public:
+    std::string getNome();
+    void setNome(std::string nome);
 
+    bool operator==(Canal &canal);
 };
 
 #endif
