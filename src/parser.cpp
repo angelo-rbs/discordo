@@ -1,17 +1,21 @@
+#ifndef PARSER_CPP
+#define PARSER_CPP
+
 #include <vector>
 #include <iostream>
-#include <string_view>
 #include <sstream>
+#include <string>
 
-#include "constants.h"
+#include "constants.cpp"
 
-class parser {
+class Parser {
 
   private:
-    static std::string command;
-    static std::vector<std::string> args;
+    std::string command;
+    std::vector<std::string> args;
 
   public:
+
 
     void parse(std::string entry) {
 
@@ -24,11 +28,20 @@ class parser {
       if (ss >> word) {
         command = word;
 
-        int argc = cte::findHowManyArgs(word);
+        int argc = cte::findHowManyArgs(command);
+        int itr = argc;
 
-        while (argc-- && ss >> word)
-          args.push_back(word);
+        while (itr > 0) {
+          if (ss >> word)
+            args.push_back(word);
+          else
+            throw runtime_error(command + " espera " + to_string(argc) + " argumentos, mas recebeu " + to_string(argc - itr));
 
+          --itr;
+        }
+
+        if (ss >> word)
+          throw runtime_error(command + " espera apenas " + to_string(argc) + " argumentos");
       }
         
     }
@@ -45,3 +58,6 @@ class parser {
     }
 
 };
+
+
+#endif

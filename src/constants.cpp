@@ -1,10 +1,13 @@
+#ifndef CONSTANTS_CPP
+#define CONSTANTS_CPP
 
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-namespace cte {
+namespace cte
+{
 
   const string SAIR = "quit";
   const string CRIAR_USUARIO = "create-user";
@@ -29,7 +32,6 @@ namespace cte {
   const int SERVIDOR_INDEFINIDO = -1;
   const int CANAL_INDEFINIDO = -1;
 
-
   const vector<pair<string, int>> commands_args = {
 
       pair(SAIR, 0),
@@ -53,12 +55,17 @@ namespace cte {
 
   };
 
-  int findHowManyArgs(string command) {
-    for (auto pair : commands_args) {
-      if (pair.first == command) return pair.second;
+  int findHowManyArgs(string command)
+  {
+    for (auto pair : commands_args)
+    {
+      if (pair.first == command)
+        return pair.second;
     }
 
-    throw runtime_error("comando não encontrado!");
+    throw runtime_error("comando \"" + command + "\" não encontrado!");
   }
 
 }
+
+#endif
