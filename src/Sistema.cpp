@@ -1,13 +1,25 @@
 
 #include "../include/Sistema.h"
-#include "../include/Parser.h"
 #include "../include/Constants.h"
+#include "../include/Parser.h"
 
 // variáveis estáticas
 
 int Sistema::idUsuarioLogado = cte::USUARIO_NAO_LOGADO;
 int Sistema::idCanalAtual = cte::CANAL_INDEFINIDO;
 int Sistema::idServidorAtual = cte::SERVIDOR_INDEFINIDO;
+
+// construtores
+
+Sistema::Sistema() {}
+
+Sistema::~Sistema() {
+    for (int i = servidores.size() - 1; i >= 0; i--)
+        delete servidores[i];
+
+    for (int i = usuarios.size() - 1; i >= 0; i--)
+        delete usuarios[i];
+}
 
 // métodos de acesso
 
@@ -68,10 +80,7 @@ Usuario* Sistema::findUsuarioByEmail(std::string email) {
 }
 
 bool Sistema::isComandoDeBoot(std::string comando) {
-
-    return (comando == "create-user")
-        || (comando == "login")
-        || (comando == "quit");
+    return (comando == "create-user") || (comando == "login") || (comando == "quit");
 }
 
 bool Sistema::logado() {
@@ -93,18 +102,19 @@ void Sistema::quit() {
 }
 
 bool Sistema::createUser(std::string email, std::string senha, std::string nome) {
-    Usuario* user = new Usuario(nome, email, senha);
 
     try {
         if (findUsuarioByEmail(email) != nullptr)
             throw logic_error("já existe um usuário com este e-mail");
 
-        usuarios.push_back(user);
+        usuarios.push_back(new Usuario(nome, email, senha));
+
         std::clog << "usuário criado com sucesso." << std::endl;
         return true;
+
     } catch (exception& e) {
+
         std::cerr << "erro ao tentar criar usuário: " << e.what() << std::endl;
-        delete user;
         return false;
     }
 }
@@ -115,7 +125,7 @@ bool Sistema::login(std::string email, std::string senha) {
         return false;
     }
 
-    Usuario* user = new Usuario();
+    Usuario* user;
 
     try {
         user = findUsuarioByLogin(email, senha);
@@ -125,12 +135,13 @@ bool Sistema::login(std::string email, std::string senha) {
 
             std::cout << "logado como " << email << "." << std::endl;
             return true;
+
         } else
-            std::cout << "verifique suas credenciais e "
-                         "tente novamente."
-                      << std::endl;
+            std::cout << "verifique suas credenciais e tente novamente." << std::endl;
+        
 
         return false;
+
     } catch (exception& e) {
         std::cerr << "erro ao tentar login. verifique suas credenciais e tente "
                      "novamente."
@@ -141,8 +152,9 @@ bool Sistema::login(std::string email, std::string senha) {
 }
 
 void Sistema::start() {
+    Parser* p = new Parser();
+
     try {
-        Parser* p = new Parser();
         std::string commandLine, nome, email, senha;
         bool parserOk;
         int exit_flag = 0;
@@ -156,12 +168,11 @@ void Sistema::start() {
             if (!isComandoDeBoot(p->getCommand()) && !logado()) {
                 std::cout << "comando indisponível antes do login" << std::endl;
                 continue;
-            } 
+            }
 
             if (p->getCommand() == cte::SAIR) {
                 quit();
             } else if (p->getCommand() == cte::CRIAR_USUARIO) {
-
                 email = p->getArg(0);
                 senha = p->getArg(1);
                 nome = p->getArg(2);
@@ -173,12 +184,11 @@ void Sistema::start() {
 
                 login(email, senha);
             }
-
-            
         }
 
         delete p;
     } catch (Sistema::my_exit& exit) {
+        delete p;
         std::clog << "sessão Discordo encerrada." << std::endl;
     }
 }

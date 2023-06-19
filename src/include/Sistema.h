@@ -17,7 +17,8 @@ class Sistema {
     static int idCanalAtual;
 
    public:
-    Sistema() {}
+    Sistema();
+    ~Sistema();
 
     struct my_exit : public std::exception {
         int value;
