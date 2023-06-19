@@ -1,11 +1,11 @@
 #include <iostream>
 #include <exception>
 
-#include "Sistema.cpp"
-#include "Usuario.cpp"
-#include "Mensagem.cpp"
-#include "constants.cpp"
-#include "Parser.cpp"
+#include "../include/Sistema.h"
+#include "../include/Usuario.h"
+#include "../include/Mensagem.h"
+#include "../include/Constants.h"
+#include "../include/Parser.h"
 
 int main()
 {

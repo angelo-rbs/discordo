@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 
-#include "Canal.cpp"
-#include "Mensagem.cpp"
+#include "Canal.h"
+#include "Mensagem.h"
 
-class CanalTexto : Canal, Loggable {
+class CanalTexto : Canal {
 
   private:
     std::vector<Mensagem> mensagens;

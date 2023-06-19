@@ -1,18 +1,19 @@
 #ifndef CANALVOZ_H
 #define CANALVOZ_H
 
-#include "Canal.cpp"
-#include "Mensagem.cpp"
+#include "Canal.h"
+#include "Mensagem.h"
 
-#include "../infra/Loggable.cpp"
-class CanalVoz : public Canal, public Loggable {
+class CanalVoz : public Canal {
 
   private:
     Mensagem ultimaMensagem;
 
   public:
+
     CanalVoz();
     Mensagem getUltimaMensagem();
+    void setUltimaMensagem(Mensagem mensagem);
 
 };
 

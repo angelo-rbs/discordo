@@ -1,9 +1,10 @@
-#include "CanalVoz.h"
+#include "../include/CanalVoz.h"
+#include "../include/Mensagem.h"
 
 CanalVoz::CanalVoz() {
 
-  logInstanciamento();
 }
+
 
 Mensagem CanalVoz::getUltimaMensagem() {
   return this->ultimaMensagem;

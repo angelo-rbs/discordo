@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../infra/Loggable.cpp"
+#include "../../infra/Loggable.cpp"
 
 class Canal {
 

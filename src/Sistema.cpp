@@ -1,8 +1,7 @@
-#include "Sistema.h"
 
-#include "Parser.cpp"
-#include "constants.cpp"
-#include "dialogs.cpp"
+#include "../include/Sistema.h"
+#include "../include/Parser.h"
+#include "../include/Constants.h"
 
 // variáveis estáticas
 
@@ -108,7 +107,7 @@ bool Sistema::login(std::string email, std::string senha) {
             std::cout << "usuário logado." << std::endl;
             return true;
         } else
-            std::cout << "usuário inexistente. verifique suas credenciais e "
+            std::cout << "verifique suas credenciais e "
                          "tente novamente."
                       << std::endl;
 

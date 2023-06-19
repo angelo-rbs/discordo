@@ -1,4 +1,4 @@
-#include "Canal.h"
+#include "../include/Canal.h"
 
 
 std::string Canal::getNome() {

@@ -3,19 +3,15 @@
 
 #include <iostream>
 
-#include "../infra/Loggable.cpp"
-
-class Usuario : Loggable
-{
-
-  private:
+class Usuario {
+   private:
     static int GLOBAL_ID;
     int id;
     std::string nome;
     std::string email;
     std::string senha;
 
-  public:
+   public:
     Usuario();
     Usuario(std::string nome, std::string email, std::string senha);
 

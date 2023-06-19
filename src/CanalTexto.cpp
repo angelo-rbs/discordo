@@ -1,9 +1,7 @@
-#include "CanalTexto.h"
+#include "../include/CanalTexto.h"
 
 CanalTexto::CanalTexto() {
 
-
-  logInstanciamento();
 }
 
 std::vector<Mensagem> CanalTexto::getMensagens() {

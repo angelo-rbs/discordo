@@ -6,10 +6,8 @@
 
 #include "Canal.h"
 
-#include "../infra/Loggable.cpp"
-
 using std::string;
-class Servidor : Loggable {
+class Servidor {
 
   private:
     int usuarioDonoId;
