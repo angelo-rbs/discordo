@@ -26,9 +26,9 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 **Se não estiver logado (Assim que entra no sistema)**
 
-- [ ] A1.1 - Sair do sistema
-- [ ] A1.2 - Criar usuário
-- [ ] A1.3 - Entrar no sistema
+- [X] A1.1 - Sair do sistema
+- [X] A1.2 - Criar usuário
+- [X] A1.3 - Entrar no sistema
 
 **Interações básicas com Servidores (Se estiver logado)**
 
@@ -64,7 +64,8 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 # Infra
 
-- [ ] Configurar CMake
+- [X] Configurar CMake
+- [ ] Configurar Doxygen
 - [ ] Integrar Valgrind 
 
 --------
