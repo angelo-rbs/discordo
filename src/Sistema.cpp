@@ -67,6 +67,25 @@ Usuario* Sistema::findUsuarioByEmail(std::string email) {
     return nullptr;
 }
 
+bool Sistema::isComandoDeBoot(std::string comando) {
+
+    return (comando == "create-user")
+        || (comando == "login")
+        || (comando == "quit");
+}
+
+bool Sistema::logado() {
+    return idUsuarioLogado != cte::USUARIO_NAO_LOGADO;
+}
+
+bool Sistema::canalDefinido() {
+    return idCanalAtual != cte::CANAL_INDEFINIDO;
+}
+
+bool Sistema::servidorDefinido() {
+    return idServidorAtual != cte::SERVIDOR_INDEFINIDO;
+}
+
 // funcionalidades
 
 void Sistema::quit() {
@@ -77,7 +96,7 @@ bool Sistema::createUser(std::string email, std::string senha, std::string nome)
     Usuario* user = new Usuario(nome, email, senha);
 
     try {
-        if (findUsuarioByLogin(email, senha) != nullptr)
+        if (findUsuarioByEmail(email) != nullptr)
             throw logic_error("já existe um usuário com este e-mail");
 
         usuarios.push_back(user);
@@ -104,7 +123,7 @@ bool Sistema::login(std::string email, std::string senha) {
         if (user != nullptr) {
             idUsuarioLogado = user->getId();
 
-            std::cout << "usuário logado." << std::endl;
+            std::cout << "logado como " << email << "." << std::endl;
             return true;
         } else
             std::cout << "verifique suas credenciais e "
@@ -130,12 +149,19 @@ void Sistema::start() {
 
         while (!exit_flag) {
             getline(std::cin, commandLine);
+
             if (!p->parse(commandLine))
                 continue;
+
+            if (!isComandoDeBoot(p->getCommand()) && !logado()) {
+                std::cout << "comando indisponível antes do login" << std::endl;
+                continue;
+            } 
 
             if (p->getCommand() == cte::SAIR) {
                 quit();
             } else if (p->getCommand() == cte::CRIAR_USUARIO) {
+
                 email = p->getArg(0);
                 senha = p->getArg(1);
                 nome = p->getArg(2);
@@ -147,6 +173,8 @@ void Sistema::start() {
 
                 login(email, senha);
             }
+
+            
         }
 
         delete p;

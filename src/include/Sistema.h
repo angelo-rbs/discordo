@@ -37,6 +37,11 @@ class Sistema {
     Usuario* findUsuarioById(Usuario* user);
     Usuario* findUsuarioByLogin(std::string email, std::string senha);
     Usuario* findUsuarioByEmail(std::string email);
+    bool logado();
+    bool servidorDefinido();
+    bool canalDefinido();
+
+    bool isComandoDeBoot(std::string comando);
 
     void start();
     void quit();

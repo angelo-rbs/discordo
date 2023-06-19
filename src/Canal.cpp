@@ -10,6 +10,6 @@ void Canal::setNome(std::string nome) {
 }
 
 bool Canal::operator==(Canal &canal) {
-  this->nome == canal.nome;
+  return this->nome == canal.nome;
 }
 
