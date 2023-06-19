@@ -5,21 +5,19 @@
 
 #include "../infra/Loggable.cpp"
 
-static int USUARIO_GLOBAL_ID = 1;
-
-class Usuario : Loggable {
+class Usuario : Loggable
+{
 
   private:
+    static int GLOBAL_ID;
     int id;
     std::string nome;
     std::string email;
     std::string senha;
 
   public:
-
     Usuario();
     Usuario(std::string nome, std::string email, std::string senha);
-
 
     int getId();
     void setId(int id);
@@ -35,7 +33,7 @@ class Usuario : Loggable {
 
     static int getAndIncrementGlobalId();
 
-    bool operator==(Usuario &usuario);
+    bool operator==(Usuario& usuario);
 };
 
 #endif

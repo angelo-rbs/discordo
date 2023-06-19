@@ -36,6 +36,9 @@ class Servidor : Loggable {
 
     std::vector<int> getParticipantesIds();
 
+    int findParticipante(int id);
+    Canal* findCanal();
+
     bool operator==(Servidor &servidor);
 
 };

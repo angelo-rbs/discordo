@@ -41,6 +41,16 @@ std::vector<int> Servidor::getParticipantesIds() {
   return this->participantesIds;
 }
 
-bool Servidor::operator==(Servidor &servidor) {
-  return this->codigoConvite == servidor.getCodigoConvite();
+int Servidor::findParticipante(int id) {
+  
+  for (int i = 0; i < participantesIds.size(); i++) {
+    if (participantesIds[i] == id) return id;
+  }
+
+  return -1;
 }
+
+bool Servidor::operator==(Servidor &servidor) {
+  return this->nome == servidor.getNome()
+      && this->usuarioDonoId == servidor.getUsuarioDonoId();
+} 

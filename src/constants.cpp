@@ -35,7 +35,7 @@ namespace cte
   const vector<pair<string, int>> commands_args = {
 
       pair(SAIR, 0),
-      pair(CRIAR_USUARIO, 2),
+      pair(CRIAR_USUARIO, 2), // são 2 cadeias consecutivas + 1 getline que permite espaços
       pair(LOGIN, 2),
       pair(DESCONECTAR, 0),
       pair(CRIAR_SERVIDOR, 1),
@@ -63,7 +63,7 @@ namespace cte
         return pair.second;
     }
 
-    throw runtime_error("comando \"" + command + "\" não encontrado!");
+    throw logic_error("comando \"" + command + "\" não encontrado!");
   }
 
 }

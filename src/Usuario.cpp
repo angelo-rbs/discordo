@@ -1,9 +1,14 @@
+#ifndef USUARIO_CPP
+#define USUARIO_CPP
+
 #include "Usuario.h"
 
 using std::string;
 
+int Usuario::GLOBAL_ID = 1;
+
 int Usuario::getAndIncrementGlobalId() {
-  return USUARIO_GLOBAL_ID++;
+  return GLOBAL_ID++;
 }
 
 
@@ -68,3 +73,5 @@ bool Usuario::operator==(Usuario &usuario) {
 
 // funcionalidades
 
+
+#endif
