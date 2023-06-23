@@ -17,7 +17,7 @@ class Sistema {
     static int idCanalAtual;
 
    public:
-    Sistema();
+    Sistema() = default;
     ~Sistema();
 
     std::vector<Usuario*> getAllUsuarios();
@@ -33,6 +33,7 @@ class Sistema {
     Usuario* findUsuarioById(int id);
     Usuario* findUsuarioByLogin(std::string email, std::string senha);
     Usuario* findUsuarioByEmail(std::string email);
+    Usuario* findUsuarioByServidor(std::string nomeServidor, int idUsuario);
     Servidor* getServidorAtual();
 
     bool logado();
@@ -55,7 +56,7 @@ class Sistema {
     bool setServerDescription(std::string nome, std::string desc);
     bool setInviteCode(std::string nome, std::string newCode);
     void listServers();
-    bool removeServer(std::string nome, int idCommandCaller);
+    bool removeServer(std::string nome);
     bool enterServer(std::string serverName, std::string inviteCode);
     bool leaveServer();
     void listParticipants();

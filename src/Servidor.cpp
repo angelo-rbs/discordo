@@ -13,7 +13,7 @@ Servidor::Servidor() {
   this->descricao = "";
   this->usuarioDonoId = -1;
   this->canais;
-  this->participantesIds;
+  this->participantesIds = vector<int>();
   this->codigoConvite = "";
 
 }
@@ -24,14 +24,14 @@ Servidor::Servidor(std::string nome, int idDono) {
   this->descricao = "";
   this->usuarioDonoId = idDono;
   this->canais;
-  this->participantesIds;
+  this->participantesIds = vector<int>();
   this->codigoConvite = "";
 
 }
 
 Servidor::~Servidor() {
 
-  for (int i = canais.size(); i >= 0; --i)
+  for (int i = 0; i < canais.size(); i++)
     delete canais[i];
 
 }
@@ -79,8 +79,8 @@ std::vector<int> Servidor::getParticipantesIds() {
   return this->participantesIds;
 }
 
-int Servidor::findParticipant(int id) {
-  
+int Servidor::findParticipantInServer(int id) {
+
   for (int i = 0; i < participantesIds.size(); i++)
     if (participantesIds[i] == id) return id;
 
@@ -89,7 +89,7 @@ int Servidor::findParticipant(int id) {
 
 bool Servidor::addParticipant(int id) {
 
-  if (findParticipant(id) == cte::USUARIO_NAO_ENCONTRADO) {
+  if (findParticipantInServer(id) == cte::USUARIO_NAO_ENCONTRADO) {
     participantesIds.push_back(id);
     return true;
   } else 

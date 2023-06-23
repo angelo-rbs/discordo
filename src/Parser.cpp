@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "../include/Constants.h"
-#include "../include/Parser.h"
+#include "include/Constants.h"
+#include "include/Parser.h"
+#include "../infra/Exits.cpp"
 
 int Parser::findHowManyArgs(std::string command) {
-    for (auto pair : cte::commands_args) {
+    for (auto pair : cte::commands_simple_args) {
         if (pair.first == command)
             return pair.second;
     }
@@ -20,46 +21,63 @@ bool Parser::parse(std::string entry) {
     if (entry.empty())
         return false;
 
-    std::string word, blank;
+    std::string word;
+    std::vector<std::string> tokens;
     std::stringstream ss(entry);
+    int amountSimpleArgsByCommand = -1;
     args.clear();
+    spacedArg.clear();
 
     try {
-        if (ss >> word) {
-            command = word;
+        
+        // splita pelo delimitador ' '
 
-            int argc = findHowManyArgs(command);
-            int itr = argc;
+        while (getline(ss, word, ' '))
+            tokens.push_back(word);
 
-            while (itr > 0) {
-                if (ss >> word)
-                    args.push_back(word);
-                else
-                    logic_error(command + " espera " + to_string(argc) + " argumentos, mas recebeu " +
-                                to_string(argc - itr));
+        command = tokens.at(0);
+        amountSimpleArgsByCommand = findHowManyArgs(command);
 
-                --itr;
-            }
+        if (tokens.size() - 1 < amountSimpleArgsByCommand)
+            throw logic_error("espero mais argumentos");
 
-            if (command == "create-user") {
-                ss >> blank;
+        // coleta os argumentos simples (sem espaço interno)
 
-                while (ss >> word)
-                    blank += " " + word;
+        int i = 1;
 
-                args.push_back(blank);
-            }
+        while (i < tokens.size() && i <= amountSimpleArgsByCommand) {
+            args.push_back(tokens.at(i));
+            ++i;
+        }
 
-            if (command != "create-user" && ss >> word)
-                throw logic_error(command + " espera apenas " + to_string(argc) + " argumentos");
-        } else
-            return false;
+        // opcionalmente coleta o argumento composto (com espaços internos
+
+        word.clear();
+        
+        i = amountSimpleArgsByCommand + 1;
+        if (i < tokens.size())
+            word += tokens.at(i);
+
+        ++i;
+        while (i < tokens.size()) {
+            word += (" " + tokens.at(i));
+            ++i;
+        }
+
+        spacedArg = word;
 
         return true;
 
-    } catch (logic_error& e) {
-        std::cerr << e.what() << std::endl;
+    } catch (early_exit& e) {
+        std::cerr << e.msg << std::endl;
         return false;
+    } catch (logic_error &e) {
+        std::clog << e.what() << std::endl;
+        return false;
+
+    } catch (std::exception &e) {
+        std::cerr << "erro no parsing: " << e.what() << std::endl;
+        throw exception();
     }
 }
 
@@ -77,9 +95,13 @@ std::string Parser::getCommand() {
     return command;
 }
 
-std::string Parser::getArg(int pos) {
+std::string Parser::getSimpleArg(int pos) {
     if (pos >= args.size())
         throw runtime_error("posição do argumento inválida.");
 
     return args[pos];
+}
+
+std::string Parser::getSpacedArg() {
+    return spacedArg;
 }

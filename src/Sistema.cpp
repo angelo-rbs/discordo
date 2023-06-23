@@ -1,3 +1,4 @@
+#include <algorithm>
 
 #include "../include/Sistema.h"
 #include "../include/Constants.h"
@@ -12,13 +13,11 @@ std::string Sistema::nomeServidorAtual = cte::SERVIDOR_INDEFINIDO;
 
 // construtores
 
-Sistema::Sistema() {}
-
 Sistema::~Sistema() {
-    for (int i = servidores.size() - 1; i >= 0; i--)
+    for (int i = 0; i < servidores.size(); i++)
         delete servidores[i];
 
-    for (int i = usuarios.size() - 1; i >= 0; i--)
+    for (int i = 0; i < usuarios.size(); i++)
         delete usuarios[i];
 }
 
@@ -77,8 +76,8 @@ Servidor* Sistema::findServidor(std::string name) {
 }
 
 Servidor* Sistema::getServidorAtual() {
-
-    if (nomeServidorAtual == cte::SERVIDOR_INDEFINIDO) return nullptr;
+    if (nomeServidorAtual == cte::SERVIDOR_INDEFINIDO)
+        return nullptr;
 
     return findServidor(nomeServidorAtual);
 }
@@ -102,7 +101,7 @@ bool Sistema::servidorDefinido() {
 // funcionalidades
 
 void Sistema::quit() {
-    throw quit_exit(0);
+    throw quit_exit("lançado sinal de saída");
 }
 
 bool Sistema::createUser(std::string email, std::string senha, std::string nome) {
@@ -116,7 +115,7 @@ bool Sistema::createUser(std::string email, std::string senha, std::string nome)
         return true;
 
     } catch (early_exit& e) {
-        std::cerr << "erro ao tentar criar usuário: " << e.what() << std::endl;
+        std::cerr << "erro ao tentar criar usuário: " << e.msg << std::endl;
         return false;
     }
 }
@@ -170,31 +169,37 @@ bool Sistema::createServer(std::string nome) {
         if (findServidor(nome) != nullptr)
             throw early_exit("já existe um servidor com esse nome");
 
-        servidores.push_back(new Servidor(nome, idUsuarioLogado));
+        Servidor *s = new Servidor(nome, idUsuarioLogado);
+        s->addParticipant(idUsuarioLogado);
+
+        servidores.push_back(s);
+        nomeServidorAtual = nome;
+
         std::cout << "servidor criado." << std::endl;
         return true;
 
     } catch (early_exit& e) {
-
-        std::cout << "erro ao criar servidor: " << e.what() << std::endl;
+        std::cout << "erro ao criar servidor: " << e.msg << std::endl;
         return false;
     }
 }
-
 
 bool Sistema::setServerDescription(std::string serverName, std::string description) {
     try {
         Servidor* servidor = findServidor(serverName);
 
         if (servidor == nullptr)
-            throw early_exit("servidor referido não existe");
+            throw early_exit("esse servidor não existe");
+
+        if (servidor->getUsuarioDonoId() != idUsuarioLogado)
+            throw early_exit("você não pode mudar a descrição de um servidor que não é seu");
 
         servidor->setDescricao(description);
-        std::cout << "descrição alterada com sucesso" << std::endl;
+        std::cout << "descrição do servidor " << serverName << " alterada" << std::endl;
         return true;
 
     } catch (early_exit& e) {
-        std::cerr << "erro ao mudar descrição do servidor: " << e.what() << std::endl;
+        std::cerr << "erro ao mudar descrição do servidor: " << e.msg << std::endl;
         return false;
     }
 }
@@ -206,12 +211,15 @@ bool Sistema::setInviteCode(std::string serverName, std::string newCode) {
         if (servidor == nullptr)
             throw early_exit("esse servidor não existe");
 
+        if (servidor->getUsuarioDonoId() != idUsuarioLogado)
+            throw early_exit("você não pode alterar o código de um servidor que não é dono");
+
         servidor->setCodigoConvite(newCode);
         std::cout << "código-convite alterado com sucesso" << std::endl;
         return true;
 
     } catch (early_exit& e) {
-        std::cerr << "erro ao mudar código-convite: " << e.what() << std::endl;
+        std::cerr << "erro ao mudar código-convite: " << e.msg << std::endl;
         return false;
     }
 }
@@ -225,19 +233,20 @@ void Sistema::listServers() {
     std::cout << "----------------------------------------" << std::endl;
 }
 
-bool Sistema::removeServer(std::string serverName, int idCommandCaller) {
+bool Sistema::removeServer(std::string serverName) {
     try {
+        Servidor* server = findServidor(serverName);
+        if (server == nullptr)
+            throw early_exit("esse servidor não existe");
 
-        if (idCommandCaller != idUsuarioLogado) throw early_exit("você não é dono do servidor");
-
-        Servidor *server = findServidor(serverName);
-        if (server == nullptr) throw early_exit("servidor com esse nome não encontradp");
+        if (server->getUsuarioDonoId() != idUsuarioLogado)
+            throw early_exit("você não é dono do servidor");
 
         for (int i = 0; i < servidores.size(); i++) {
-            
             if (servidores[i]->getNome() == serverName) {
                 servidores.erase(servidores.begin() + i);
-                delete server;                                      // essa linha deveria existir?
+                delete server;  // essa linha deveria existir?
+                std::cout << serverName << " removido" << std::endl;
                 return true;
             }
         }
@@ -245,69 +254,76 @@ bool Sistema::removeServer(std::string serverName, int idCommandCaller) {
         return false;
 
     } catch (early_exit& e) {
-
-        std::cerr << "erro ao remover servidor: " << e.what() << std::endl;
+        std::cerr << "erro ao remover servidor: " << e.msg << std::endl;
         return false;
     }
 }
 
 bool Sistema::enterServer(std::string serverName, std::string givenInviteCode = "") {
-
     try {
+        Servidor* toEnter = findServidor(serverName);
+        if (toEnter == nullptr)
+            throw early_exit("esse servidor não existe");
 
-        Servidor *toEnter = findServidor(serverName);
-        if (toEnter == nullptr) throw early_exit("o servidor referido não existe");
+        if (!toEnter->findParticipantInServer(idUsuarioLogado) == cte::USUARIO_NAO_ENCONTRADO)
+            throw early_exit("você já está no servidor");
 
         if (toEnter->getUsuarioDonoId() != idUsuarioLogado) {
-
             if (toEnter->isFechado()) {
-                if (givenInviteCode == "") throw early_exit("o servidor requer código de convite");
-                if (givenInviteCode != toEnter->getCodigoConvite()) throw  early_exit("código errado. tente novamente.");
+                if (givenInviteCode == "")
+                    throw early_exit("o servidor requer código de convite");
+                if (givenInviteCode != toEnter->getCodigoConvite())
+                    throw early_exit("código errado. tente novamente.");
             }
-
-            if (givenInviteCode == toEnter->getCodigoConvite() && !toEnter->findParticipant(idUsuarioLogado))
-                toEnter->addParticipant(idUsuarioLogado);
         }
 
+        toEnter->addParticipant(idUsuarioLogado);
         nomeServidorAtual = toEnter->getNome();
 
+        std::cout << "entrou no servidor com sucesso" << std::endl;
         return true;
 
-    } catch (early_exit &e) {
-        std::cerr << "erro ao tentar entrar no servidor" << e.what() << std::endl;
+    } catch (early_exit& e) {
+        std::cerr << e.msg << std::endl;
         return false;
     }
 }
 
 bool Sistema::leaveServer() {
-
     if (nomeServidorAtual == cte::SERVIDOR_INDEFINIDO) {
         std::cout << "você não está visualizando nenhum servidor" << std::endl;
         return false;
     } else {
-        std::cout << "saindo do servidor \"" << nomeServidorAtual << "\"" << std::endl; 
+        std::cout << "saindo do servidor \"" << nomeServidorAtual << "\"" << std::endl;
         nomeServidorAtual = cte::SERVIDOR_INDEFINIDO;
         return true;
     }
 }
 
 void Sistema::listParticipants() {
+    Servidor* server = getServidorAtual();
+    Usuario* user;
 
-    Servidor *server = getServidorAtual();
-    Usuario *user;
+    if (server == nullptr)
+        throw early_exit("não existe servidor atual definido");
+
+    std::cout << "----------------------------------------" << std::endl;
+    std::cout << server->getParticipantesIds().size() << " participantes de " << server->getNome() << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
 
     for (int id : server->getParticipantesIds()) {
         user = findUsuarioById(id);
         std::cout << user->getNome() << std::endl;
     }
 
+    std::cout << "----------------------------------------" << std::endl;
 }
 
 void Sistema::start() {
     Parser* p = new Parser();
 
     try {
-        std::string commandLine, nome, email, senha;
+        std::string commandLine, nome, email, senha, desc, codigo, parsedCommand;
         bool parserOk;
         int exit_flag = 0;
 
@@ -322,19 +338,55 @@ void Sistema::start() {
                 continue;
             }
 
-            if (p->getCommand() == cte::SAIR) {
+            parsedCommand = p->getCommand();
+            ;
+
+            if (parsedCommand == cte::SAIR) {
                 quit();
-            } else if (p->getCommand() == cte::CRIAR_USUARIO) {
-                email = p->getArg(0);
-                senha = p->getArg(1);
-                nome = p->getArg(2);
+            } else if (parsedCommand == cte::CRIAR_USUARIO) {
+                email = p->getSimpleArg(0);
+                senha = p->getSimpleArg(1);
+                nome = p->getSpacedArg();
 
                 createUser(email, senha, nome);
-            } else if (p->getCommand() == cte::LOGIN) {
-                email = p->getArg(0);
-                senha = p->getArg(1);
+            } else if (parsedCommand == cte::LOGIN) {
+                email = p->getSimpleArg(0);
+                senha = p->getSimpleArg(1);
 
                 login(email, senha);
+            } else if (parsedCommand == cte::DESCONECTAR) {
+                disconnect();
+
+            } else if (parsedCommand == cte::CRIAR_SERVIDOR) {
+                nome = p->getSimpleArg(0);
+                createServer(nome);
+            } else if (parsedCommand == cte::LISTAR_SERVIDORES) {
+                listServers();
+            } else if (parsedCommand == cte::MUDAR_DESCRICAO_SERVIDOR) {
+                nome = p->getSimpleArg(0);
+                desc = p->getSpacedArg();
+
+                setServerDescription(nome, desc);
+            } else if (parsedCommand == cte::MUDAR_CONVITE_SERVIDOR) {
+                nome = p->getSimpleArg(0);
+                codigo = p->getSpacedArg();
+              
+                setInviteCode(nome, codigo);
+            } else if (parsedCommand == cte::REMOVER_SERVIDOR) {
+                nome = p->getSimpleArg(0);
+
+                removeServer(nome);
+            } else if (parsedCommand == cte::ENTRAR_SERVIDOR) {
+                nome = p->getSimpleArg(0);
+                codigo = p->getSpacedArg();
+
+                enterServer(nome, codigo);
+            } else if (parsedCommand == cte::SAIR_SERVIDOR) {
+
+                leaveServer();
+            } else if (parsedCommand == cte::LISTAR_PARTICIPANTES) {
+
+                listParticipants();
             }
         }
 
@@ -342,5 +394,9 @@ void Sistema::start() {
     } catch (quit_exit& exit) {
         delete p;
         std::clog << "sessão Discordo encerrada." << std::endl;
+    } catch (std::exception& e) {
+        std::cout << "erro no start(): " << e.what() << std::endl;
+        throw exception();
+        delete p;
     }
 }

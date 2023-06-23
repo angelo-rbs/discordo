@@ -1,23 +1,25 @@
 #include <iostream>
 #include <exception>
 
-#include "../include/Sistema.h"
-#include "../include/Usuario.h"
-#include "../include/Mensagem.h"
-#include "../include/Constants.h"
-#include "../include/Parser.h"
+#include "include/Sistema.h"
+#include "include/Usuario.h"
+#include "include/Mensagem.h"
+#include "include/Constants.h"
+#include "include/Parser.h"
 
-int main()
+int main(int argc, char* argv)
 {
+
+  // TODO: entrada de lista de comandos externa
 
   try {
     
     Sistema *sistema = new Sistema();
     sistema->start();
 
-    delete sistema;
+    delete sistema;    
 
   } catch (exception &e) {
-    std::cerr << e.what() << std::endl;
+    std::cerr << "exceção capturada na main: " << e.what() << std::endl;
   }
 }

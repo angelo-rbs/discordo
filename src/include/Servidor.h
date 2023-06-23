@@ -39,7 +39,7 @@ class Servidor {
 
     std::vector<int> getParticipantesIds();
 
-    int findParticipant(int id);
+    int findParticipantInServer(int id);
     bool addParticipant(int id);
     Canal* findCanal();
 

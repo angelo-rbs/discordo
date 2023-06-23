@@ -32,15 +32,15 @@ const std::string SERVIDOR_INDEFINIDO = "";
 const int CANAL_INDEFINIDO = -1;
 const int USUARIO_NAO_ENCONTRADO = -1;
 
-const vector<pair<string, int>> commands_args = {
+const vector<pair<string, int>> commands_simple_args = {
 
     pair(SAIR, 0),
-    pair(CRIAR_USUARIO, 2),  // são 2 cadeias consecutivas + 1 getline que permite espaços
+    pair(CRIAR_USUARIO, 2),
     pair(LOGIN, 2),
     pair(DESCONECTAR, 0),
     pair(CRIAR_SERVIDOR, 1),
-    pair(MUDAR_DESCRICAO_SERVIDOR, 2),
-    pair(MUDAR_CONVITE_SERVIDOR, 2),
+    pair(MUDAR_DESCRICAO_SERVIDOR, 1),
+    pair(MUDAR_CONVITE_SERVIDOR, 1),
     pair(LISTAR_SERVIDORES, 0),
     pair(REMOVER_SERVIDOR, 1),
     pair(ENTRAR_SERVIDOR, 1),
@@ -55,7 +55,7 @@ const vector<pair<string, int>> commands_args = {
 
 };
 
-}  // namespace cte
+}
 
 
 #endif
