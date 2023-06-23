@@ -13,41 +13,53 @@ class Sistema {
     std::vector<Usuario*> usuarios;
     std::vector<Servidor*> servidores;
     static int idUsuarioLogado;
-    static int idServidorAtual;
+    static std::string nomeServidorAtual;
     static int idCanalAtual;
 
    public:
     Sistema();
     ~Sistema();
 
-    struct my_exit : public std::exception {
-        int value;
-        my_exit(int value) : value(value) {}
-    };
-
     std::vector<Usuario*> getAllUsuarios();
     std::vector<Servidor*> getAllServidores();
     int getIdUsuarioLogado();
-    int getIdServidorAtual();
+    std::string getNomeServidorAtual();
     int getIdCanalAtual();
     int incrementAndGetIdUsuarioLogado();
     int incrementAndGetServidorAtual();
     int incrementAndGetCanalAtual();
 
-    Servidor* findServidor(Servidor* server);
-    Usuario* findUsuarioById(Usuario* user);
+    Servidor* findServidor(std::string nome);
+    Usuario* findUsuarioById(int id);
     Usuario* findUsuarioByLogin(std::string email, std::string senha);
     Usuario* findUsuarioByEmail(std::string email);
+    Servidor* getServidorAtual();
+
     bool logado();
     bool servidorDefinido();
     bool canalDefinido();
 
     bool isComandoDeBoot(std::string comando);
 
+    // funcionalidesdes A1
+
     void start();
     void quit();
     bool createUser(std::string email, std::string senha, std::string nome);
     bool login(std::string email, std::string senha);
+
+    // funcionalidades A2
+
+    void disconnect();
+    bool createServer(std::string nome);
+    bool setServerDescription(std::string nome, std::string desc);
+    bool setInviteCode(std::string nome, std::string newCode);
+    void listServers();
+    bool removeServer(std::string nome, int idCommandCaller);
+    bool enterServer(std::string serverName, std::string inviteCode);
+    bool leaveServer();
+    void listParticipants();
+
 };
 
 #endif

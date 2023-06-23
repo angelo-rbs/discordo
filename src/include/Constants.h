@@ -28,8 +28,9 @@ const string ENVIAR_MENSAGEM = "send-message";
 const string LISTAR_MENSAGENS = "list-messages";
 
 const int USUARIO_NAO_LOGADO = -1;
-const int SERVIDOR_INDEFINIDO = -1;
+const std::string SERVIDOR_INDEFINIDO = "";
 const int CANAL_INDEFINIDO = -1;
+const int USUARIO_NAO_ENCONTRADO = -1;
 
 const vector<pair<string, int>> commands_args = {
 

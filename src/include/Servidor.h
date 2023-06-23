@@ -18,6 +18,10 @@ class Servidor {
     std::vector<int> participantesIds;
 
   public:
+    Servidor();
+    Servidor(std::string nome, int idDono);
+    ~Servidor();
+
     int getUsuarioDonoId();
     void setUsuarioDonoId(int usuarioDonoId);
 
@@ -29,12 +33,14 @@ class Servidor {
 
     string getCodigoConvite();
     void setCodigoConvite(string codigoConvite);
+    bool isFechado();
 
     std::vector<Canal *> getCanais();
 
     std::vector<int> getParticipantesIds();
 
-    int findParticipante(int id);
+    int findParticipant(int id);
+    bool addParticipant(int id);
     Canal* findCanal();
 
     bool operator==(Servidor &servidor);
