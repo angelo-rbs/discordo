@@ -32,15 +32,15 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 **Interações básicas com Servidores (Se estiver logado)**
 
-- [ ] A2.1 - Desconectar do Concorda
-- [ ] A2.2 - Criar servidores (nome)
-- [ ] A2.3 - Mudar a descrição do servidor
-- [ ] A2.4 - Setar código de convite para o servidor
-- [ ] A2.5 - Listar servidores
-- [ ] A2.6 - Remover servidor
-- [ ] A2.7 - Entrar em um servidor
-- [ ] A2.8 - Sair do servidor
-- [ ] A2.9 - Listar pessoas no servidor
+- [X] A2.1 - Desconectar do Concorda
+- [X] A2.2 - Criar servidores (nome)
+- [X] A2.3 - Mudar a descrição do servidor
+- [X] A2.4 - Setar código de convite para o servidor
+- [X] A2.5 - Listar servidores
+- [X] A2.6 - Remover servidor
+- [X] A2.7 - Entrar em um servidor
+- [X] A2.8 - Sair do servidor
+- [X] A2.9 - Listar pessoas no servidor
 
 ### Funcionalidades (Parte 2)
 
