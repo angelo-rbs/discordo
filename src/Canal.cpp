@@ -1,12 +1,19 @@
-#include "../include/Canal.h"
+#include "include/Canal.h"
 
+Canal::Canal(std::string nome) : nome(nome) {
+
+}
 
 std::string Canal::getNome() {
-    return this->nome;
+    return nome;
 }
 
 void Canal::setNome(std::string nome) {
     this->nome = nome;
+}
+
+int Canal::getTipo() {
+  return tipo;
 }
 
 bool Canal::operator==(Canal &canal) {

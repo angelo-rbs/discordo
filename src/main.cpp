@@ -7,7 +7,8 @@
 #include "include/Constants.h"
 #include "include/Parser.h"
 
-int main(int argc, char* argv)
+
+int main()
 {
 
   // TODO: entrada de lista de comandos externa

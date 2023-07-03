@@ -1,31 +1,24 @@
 
 #include <vector>
 
-#include "../include/Servidor.h"
-#include "../include/Constants.h"
-#include "../include/Canal.h"
+#include "include/Servidor.h"
+#include "include/Constants.h"
+#include "include/Canal.h"
+#include "include/CanalTexto.h"
+#include "include/CanalVoz.h"
 
 // construtores
 
-Servidor::Servidor() {
-
-  this->nome = "";
-  this->descricao = "";
-  this->usuarioDonoId = -1;
-  this->canais;
-  this->participantesIds = vector<int>();
-  this->codigoConvite = "";
-
-}
+Servidor::Servidor() = default;
 
 Servidor::Servidor(std::string nome, int idDono) {
 
   this->nome = nome;
   this->descricao = "";
   this->usuarioDonoId = idDono;
-  this->canais;
-  this->participantesIds = vector<int>();
   this->codigoConvite = "";
+  this->canais;
+  this->participantesIds;
 
 }
 
@@ -71,8 +64,12 @@ void Servidor::setCodigoConvite(string codigoConvite) {
   this->codigoConvite = codigoConvite;
 }
 
-std::vector<Canal*> Servidor::getCanais() {
+std::vector<Canal*>& Servidor::getCanais() {
   return this->canais;
+}
+
+void Servidor::addCanal(Canal* canal) {
+  this->canais.push_back(canal);
 }
 
 std::vector<int> Servidor::getParticipantesIds() {

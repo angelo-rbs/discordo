@@ -27,10 +27,13 @@ const string SAIR_CANAL = "leave-channel";
 const string ENVIAR_MENSAGEM = "send-message";
 const string LISTAR_MENSAGENS = "list-messages";
 
+
 const int USUARIO_NAO_LOGADO = -1;
 const std::string SERVIDOR_INDEFINIDO = "";
-const int CANAL_INDEFINIDO = -1;
+const std::string CANAL_INDEFINIDO = "";
 const int USUARIO_NAO_ENCONTRADO = -1;
+
+enum tipoDeCanal { texto, voz };
 
 const vector<pair<string, int>> commands_simple_args = {
 
@@ -51,7 +54,8 @@ const vector<pair<string, int>> commands_simple_args = {
     pair(ENTRAR_CANAL, 1),
     pair(SAIR_CANAL, 0),
     pair(ENVIAR_MENSAGEM, 1),
-    pair(LISTAR_MENSAGENS, 0)
+    pair(LISTAR_MENSAGENS, 0),
+    pair(LISTAR_CANAIS, 0),
 
 };
 

@@ -14,7 +14,8 @@ class Sistema {
     std::vector<Servidor*> servidores;
     static int idUsuarioLogado;
     static std::string nomeServidorAtual;
-    static int idCanalAtual;
+    static std::string nomeCanalAtual;
+    std::string tipoToString(int);
 
    public:
     Sistema() = default;
@@ -24,7 +25,8 @@ class Sistema {
     std::vector<Servidor*> getAllServidores();
     int getIdUsuarioLogado();
     std::string getNomeServidorAtual();
-    int getIdCanalAtual();
+    std::string getNomeCanalAtual();
+    Canal* getCanalAtual();
     int incrementAndGetIdUsuarioLogado();
     int incrementAndGetServidorAtual();
     int incrementAndGetCanalAtual();
@@ -34,6 +36,7 @@ class Sistema {
     Usuario* findUsuarioByLogin(std::string email, std::string senha);
     Usuario* findUsuarioByEmail(std::string email);
     Usuario* findUsuarioByServidor(std::string nomeServidor, int idUsuario);
+    Canal* findCanal(std::string nome);
     Servidor* getServidorAtual();
 
     bool logado();
@@ -60,6 +63,15 @@ class Sistema {
     bool enterServer(std::string serverName, std::string inviteCode);
     bool leaveServer();
     void listParticipants();
+
+    // funcionalidades B1
+
+    void listChannels();
+    bool createChannel(std::string nome, std::string tipo);
+    bool enterChannel(std::string nome);
+    bool leaveChannel();
+
+    // funcionalidades B2 ...
 
 };
 

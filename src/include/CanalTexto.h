@@ -7,13 +7,13 @@
 #include "Canal.h"
 #include "Mensagem.h"
 
-class CanalTexto : Canal {
+class CanalTexto : public Canal {
 
   private:
     std::vector<Mensagem> mensagens;
 
   public:
-    CanalTexto();
+    CanalTexto(std::string nome);
     std::vector<Mensagem> getMensagens();
 };
 

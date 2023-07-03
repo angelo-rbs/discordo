@@ -1,14 +1,17 @@
 #include <algorithm>
+#include <stdio.h>
 
-#include "../include/Sistema.h"
-#include "../include/Constants.h"
-#include "../include/Parser.h"
+#include "include/Sistema.h"
+#include "include/CanalTexto.h"
+#include "include/CanalVoz.h"
+#include "include/Constants.h"
+#include "include/Parser.h"
 #include "../infra/Exits.cpp"
 
 // variáveis estáticas
 
 int Sistema::idUsuarioLogado = cte::USUARIO_NAO_LOGADO;
-int Sistema::idCanalAtual = cte::CANAL_INDEFINIDO;
+std::string Sistema::nomeCanalAtual = cte::CANAL_INDEFINIDO;
 std::string Sistema::nomeServidorAtual = cte::SERVIDOR_INDEFINIDO;
 
 // construtores
@@ -39,8 +42,12 @@ std::string Sistema::getNomeServidorAtual() {
     return nomeServidorAtual;
 }
 
-int Sistema::getIdCanalAtual() {
-    return idCanalAtual;
+std::string Sistema::getNomeCanalAtual() {
+    return nomeCanalAtual;
+}
+
+Canal* Sistema::getCanalAtual() {
+    return findCanal(nomeCanalAtual);
 }
 
 Usuario* Sistema::findUsuarioById(int id) {
@@ -75,6 +82,27 @@ Servidor* Sistema::findServidor(std::string name) {
     return nullptr;
 }
 
+Canal* Sistema::findCanal(std::string nome) {
+
+    Servidor *atual = getServidorAtual();
+    
+    for (Canal *canal : atual->getCanais())
+        if (canal->getNome() == nome) return canal;
+
+    return nullptr;
+}
+
+std::string Sistema::tipoToString(int tipo) {
+
+    if (tipo == cte::voz) {
+        return "voz";
+    } else if (tipo == cte::texto)
+        return "texto";
+    else
+        return "";
+
+}
+
 Servidor* Sistema::getServidorAtual() {
     if (nomeServidorAtual == cte::SERVIDOR_INDEFINIDO)
         return nullptr;
@@ -91,7 +119,7 @@ bool Sistema::logado() {
 }
 
 bool Sistema::canalDefinido() {
-    return idCanalAtual != cte::CANAL_INDEFINIDO;
+    return nomeCanalAtual != cte::CANAL_INDEFINIDO;
 }
 
 bool Sistema::servidorDefinido() {
@@ -319,11 +347,101 @@ void Sistema::listParticipants() {
     std::cout << "----------------------------------------" << std::endl;
 }
 
+void Sistema::listChannels() {
+
+    Servidor *servidor = getServidorAtual();
+
+    std::vector<Canal*> canaisTexto;
+    std::vector<Canal*> canaisVoz;
+
+    for (Canal *canal : servidor->getCanais()) {
+        if (canal->getTipo() == cte::texto)
+            canaisTexto.push_back(canal);
+        else if (canal->getTipo() == cte::voz)
+            canaisVoz.push_back(canal);
+    }
+
+    std::cout << "servidor \"" << servidor->getNome() << "\"" << std::endl;
+    std::cout << servidor->getCanais().size() << " canais totais" << std::endl;
+
+    std::cout << "#canais de texto (" << canaisTexto.size() << ")" << std::endl;
+    for (Canal *canal : canaisTexto)
+        std::cout << canal->getNome() << std::endl;
+
+    std::cout << "#canais de voz (" << canaisVoz.size() << ")" << std::endl;
+    for (Canal *canal : canaisVoz)
+        std::cout << canal->getNome() << std::endl;
+
+    std::cout << std::endl; 
+}
+
+bool Sistema::createChannel(std::string nome, std::string tipo) {
+
+    Canal *canal;
+
+    try {
+        Servidor *atual = getServidorAtual();
+        if (atual == nullptr) throw early_exit("servidor não encontrado");
+
+        // verifica existência
+
+        for (Canal *it : atual->getCanais()) 
+            if (it->getNome() == nome && tipoToString(it->getTipo()) == tipo)
+                throw early_exit("canal de " + tipo + " \"" + nome + "\" já existe.");
+
+        // cria o canal
+        
+        if (tipo == "texto") {
+            canal = new CanalTexto(nome);
+        } else if (tipo == "voz")
+            canal = new CanalVoz(nome);
+        else
+            throw early_exit("tipo de canal inexistente");
+
+        atual->addCanal(canal);
+        return true;
+
+    } catch (early_exit &e) {
+
+        std::cout << "erro ao tentar criar canal: " << e.msg << std::endl;
+        return false;
+    }
+}
+
+bool Sistema::enterChannel(std::string nome) {
+
+    if (findCanal(nome) != nullptr) {
+        nomeCanalAtual = nome;
+        return true;
+
+    } else {
+
+        std::cout << "canal inexistente" << std::endl;
+        return false;
+    }
+}
+
+bool Sistema::leaveChannel() {
+
+
+    if (!canalDefinido()) {
+        std::cout << "você não está visualizando nenhum canal" << std::endl;
+        return false;
+
+    } else {
+        Canal *canal = getCanalAtual();
+
+        std::cout << "você saiu do canal " << canal->getNome() << std::endl;
+        nomeCanalAtual = cte::CANAL_INDEFINIDO;
+        return true;
+    }
+}
+
 void Sistema::start() {
     Parser* p = new Parser();
 
     try {
-        std::string commandLine, nome, email, senha, desc, codigo, parsedCommand;
+        std::string commandLine, nome, email, senha, desc, codigo, command, tipo;
         bool parserOk;
         int exit_flag = 0;
 
@@ -338,55 +456,70 @@ void Sistema::start() {
                 continue;
             }
 
-            parsedCommand = p->getCommand();
-            ;
+            command = p->getCommand();
+            
 
-            if (parsedCommand == cte::SAIR) {
+            if (command == cte::SAIR) {
                 quit();
-            } else if (parsedCommand == cte::CRIAR_USUARIO) {
+            } else if (command == cte::CRIAR_USUARIO) {
                 email = p->getSimpleArg(0);
                 senha = p->getSimpleArg(1);
                 nome = p->getSpacedArg();
 
                 createUser(email, senha, nome);
-            } else if (parsedCommand == cte::LOGIN) {
+            } else if (command == cte::LOGIN) {
                 email = p->getSimpleArg(0);
                 senha = p->getSimpleArg(1);
 
                 login(email, senha);
-            } else if (parsedCommand == cte::DESCONECTAR) {
+            } else if (command == cte::DESCONECTAR) {
                 disconnect();
 
-            } else if (parsedCommand == cte::CRIAR_SERVIDOR) {
+            } else if (command == cte::CRIAR_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 createServer(nome);
-            } else if (parsedCommand == cte::LISTAR_SERVIDORES) {
+            } else if (command == cte::LISTAR_SERVIDORES) {
                 listServers();
-            } else if (parsedCommand == cte::MUDAR_DESCRICAO_SERVIDOR) {
+            } else if (command == cte::MUDAR_DESCRICAO_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 desc = p->getSpacedArg();
 
                 setServerDescription(nome, desc);
-            } else if (parsedCommand == cte::MUDAR_CONVITE_SERVIDOR) {
+            } else if (command == cte::MUDAR_CONVITE_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 codigo = p->getSpacedArg();
               
                 setInviteCode(nome, codigo);
-            } else if (parsedCommand == cte::REMOVER_SERVIDOR) {
+            } else if (command == cte::REMOVER_SERVIDOR) {
                 nome = p->getSimpleArg(0);
 
                 removeServer(nome);
-            } else if (parsedCommand == cte::ENTRAR_SERVIDOR) {
+            } else if (command == cte::ENTRAR_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 codigo = p->getSpacedArg();
 
                 enterServer(nome, codigo);
-            } else if (parsedCommand == cte::SAIR_SERVIDOR) {
+            } else if (command == cte::SAIR_SERVIDOR) {
 
                 leaveServer();
-            } else if (parsedCommand == cte::LISTAR_PARTICIPANTES) {
+            } else if (command == cte::LISTAR_PARTICIPANTES) {
 
                 listParticipants();
+            } else if (command == cte::LISTAR_CANAIS) {
+
+                listChannels();
+            } else if (command == cte::CRIAR_CANAL) {
+                nome = p->getSimpleArg(0);
+                tipo = p->getSimpleArg(1);
+
+                createChannel(nome, tipo);
+            } else if (command == cte::ENTRAR_CANAL) {
+                nome = p->getSimpleArg(0);
+
+                enterChannel(nome);
+            } else if (command == cte::SAIR_CANAL) {
+
+                leaveChannel();
             }
         }
 

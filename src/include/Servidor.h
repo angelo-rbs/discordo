@@ -35,7 +35,8 @@ class Servidor {
     void setCodigoConvite(string codigoConvite);
     bool isFechado();
 
-    std::vector<Canal *> getCanais();
+    std::vector<Canal *>& getCanais();
+    void addCanal(Canal* canal);
 
     std::vector<int> getParticipantesIds();
 

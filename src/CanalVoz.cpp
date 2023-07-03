@@ -1,8 +1,8 @@
-#include "../include/CanalVoz.h"
-#include "../include/Mensagem.h"
+#include "include/CanalVoz.h"
+#include "include/Mensagem.h"
 
-CanalVoz::CanalVoz() {
-
+CanalVoz::CanalVoz(std::string nome) : Canal(nome) {
+  tipo = cte::voz;
 }
 
 

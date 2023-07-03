@@ -1,7 +1,7 @@
 #ifndef USUARIO_CPP
 #define USUARIO_CPP
 
-#include "../include/Usuario.h"
+#include "include/Usuario.h"
 
 using std::string;
 

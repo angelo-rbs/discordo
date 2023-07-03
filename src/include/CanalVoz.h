@@ -11,7 +11,7 @@ class CanalVoz : public Canal {
 
   public:
 
-    CanalVoz();
+    CanalVoz(std::string nome);
     Mensagem getUltimaMensagem();
     void setUltimaMensagem(Mensagem mensagem);
 

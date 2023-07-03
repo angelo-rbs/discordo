@@ -46,10 +46,10 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 **Gestão de canais**
 
-- [ ] B1.1 - Listar canais do servidor (de áudio ou texto)
-- [ ] B1.2 - Criar um canal do servidor 
-- [ ] B1.3 - Entrar em um canal
-- [ ] B1.4 - Sair do canal
+- [X] B1.1 - Listar canais do servidor (de áudio ou texto)
+- [X] B1.2 - Criar um canal do servidor 
+- [X] B1.3 - Entrar em um canal
+- [X] B1.4 - Sair do canal
 
 **Gestão de mensagens**
 
