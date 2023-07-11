@@ -7,13 +7,14 @@
 class CanalVoz : public Canal {
 
   private:
-    Mensagem ultimaMensagem;
+    Mensagem* ultimaMensagem;
 
   public:
-
     CanalVoz(std::string nome);
-    Mensagem getUltimaMensagem();
-    void setUltimaMensagem(Mensagem mensagem);
+    Mensagem* getUltimaMensagem();
+
+    virtual void addMessage(Mensagem*);
+    virtual void listMessages(std::vector<Usuario*> users);
 
 };
 
