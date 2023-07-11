@@ -5,8 +5,10 @@
 #include <iostream>
 #include <vector>
 
+#include "Canal.h"
 #include "Servidor.h"
 #include "Usuario.h"
+
 
 class Sistema {
    private:
@@ -16,6 +18,7 @@ class Sistema {
     static std::string nomeServidorAtual;
     static std::string nomeCanalAtual;
     std::string tipoToString(int);
+    std::string formatMessage(Mensagem *msg);
 
    public:
     Sistema() = default;
@@ -71,7 +74,15 @@ class Sistema {
     bool enterChannel(std::string nome);
     bool leaveChannel();
 
-    // funcionalidades B2 ...
+    // funcionalidades B2
+
+    void sendMessage(std::string msg);
+    void listMessages();
+
+    // funcionalidades C1
+
+
+    // funcionalidades C2
 
 };
 

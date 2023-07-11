@@ -53,9 +53,8 @@ const vector<pair<string, int>> commands_simple_args = {
     pair(CRIAR_CANAL, 2),
     pair(ENTRAR_CANAL, 1),
     pair(SAIR_CANAL, 0),
-    pair(ENVIAR_MENSAGEM, 1),
+    pair(ENVIAR_MENSAGEM, 0),
     pair(LISTAR_MENSAGENS, 0),
-    pair(LISTAR_CANAIS, 0),
 
 };
 

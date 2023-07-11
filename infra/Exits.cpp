@@ -2,6 +2,7 @@
 #define EXITS_CPP
 
 #include <exception>
+#include <iostream>
 
 struct quit_exit : public std::exception {
     std::string msg;
