@@ -16,7 +16,7 @@ class Mensagem {
     // nao faz sentido criar uma mensagem vazia
 
     Mensagem();
-    Mensagem(std::string dataHora, int enviadaPor, std::string conteudo);
+    Mensagem(int enviadaPor, std::string conteudo);
 
     std::string getDataHora();
     void setDataHora(std::string dataHora);

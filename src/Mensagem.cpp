@@ -1,17 +1,15 @@
 #include "include/Mensagem.h"
+#include "../infra/Utils.cpp"
 
 using std::string;
 
 // construtor
 
-Mensagem::Mensagem() {
+Mensagem::Mensagem() = default;
 
-  
-}
+Mensagem::Mensagem(int enviadaPor, string conteudo) {
 
-Mensagem::Mensagem(string dataHora, int enviadaPor, string conteudo) {
-
-  this->dataHora = dataHora;
+  this->dataHora = currentDateTime();
   this->enviadaPor = enviadaPor;
   this->conteudo = conteudo;
 
