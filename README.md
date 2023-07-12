@@ -53,20 +53,19 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 
 **Gestão de mensagens**
 
-- [ ] B2.1 - Enviar mensagem para o canal
-- [ ] B2.2 - Visualizar mensagens do canal
+- [X] B2.1 - Enviar mensagem para o canal
+- [X] B2.2 - Visualizar mensagens do canal
 
 ### Funcionalidades (Parte 3)
 
-- [ ] Persistência dos dados em disco
-- [ ] Restauração dos dados do disco na inicialização do sistema
+- [X] Persistência dos dados em disco
+- [X] Restauração dos dados do disco na inicialização do sistema
 
 
 # Infra
 
 - [X] Configurar CMake
-- [ ] Configurar Doxygen
-- [ ] Integrar Valgrind 
+- [X] Teste com Valgrind 
 
 --------
 
