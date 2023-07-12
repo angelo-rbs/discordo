@@ -24,6 +24,8 @@ e o programa será compilado num arquivo único nomeado Discordo. Para executá-
 
 ``./Discordo``.
 
+O Discordo suporta todos as funcionalidades de manipulação de Usuario, Servidor, Canal e Mensagem sugeridos no documento de orientação do projeto segundo a sintaxe CLI sugerida, bem como identifica e adverte seu mau uso.
+
 # Acompanhamento da implementação
 
 ## Classes base 
