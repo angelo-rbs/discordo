@@ -26,6 +26,8 @@ e o programa será compilado num arquivo único nomeado Discordo. Para executá-
 
 O Discordo suporta todos as funcionalidades de manipulação de Usuario, Servidor, Canal e Mensagem sugeridos no documento de orientação do projeto segundo a sintaxe CLI sugerida, bem como identifica e adverte seu mau uso.
 
+Senti que o design do sistema proposto pelo documento de orientação chegou a atrapalhar o desenvolvimento de soluções mais adequadas. Tomo como exemplo a classe CanalVoz, que limitada a guardar apenas a última mensagem (de tipo Mensagem*), diferente de CanalTexto, que intuitivamente guarda a lista das últimas mensagens (de tipo diferente, vector<Mensagem*>), impossibilita a criação de uma abstração dos métodos de acesso às mensagens diretamente na classe Pai das duas anteriores, a Canal. 
+
 # Acompanhamento da implementação
 
 ## Classes base 
