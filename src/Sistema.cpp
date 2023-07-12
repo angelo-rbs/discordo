@@ -113,6 +113,10 @@ Servidor* Sistema::getServidorAtual() {
     return findServidor(nomeServidorAtual);
 }
 
+void Sistema::addServer(Servidor *toAdd) {
+    this->servidores.push_back(toAdd);
+}
+
 bool Sistema::isComandoDeBoot(std::string comando) {
     return (comando == "create-user") || (comando == "login") || (comando == "quit");
 }
@@ -463,7 +467,8 @@ bool Sistema::leaveChannel() {
 
 
 void Sistema::sendMessage(std::string msg) {
-    Mensagem* toAdd = new Mensagem(idUsuarioLogado, msg);
+    string empty;
+    Mensagem* toAdd = new Mensagem(idUsuarioLogado, msg, empty);
 
     try {
         Canal* canalAtual = findCanal(nomeCanalAtual);
@@ -508,7 +513,7 @@ void Sistema::salvarUsuarios() {
 }
 
 void Sistema::salvarServidores() {
-    // std::clog << "entrou no salvar servidores" << std::endl;
+    std::clog << "entrou no salvar servidores" << std::endl;
 
     vector<Servidor*> servers = servidores;
     
@@ -537,7 +542,7 @@ void Sistema::salvarServidores() {
             else if (channel->getTipo() == cte::voz)
                 file << "VOZ" << std::endl;
 
-            file << "quantMensagens: " << channel->getMensagens().size() << std::endl;
+            file << channel->getMensagens().size() << std::endl;
 
             for (Mensagem *message : channel->getMensagens()) {
                 file << message->getEnviadaPor() << std::endl;
@@ -564,6 +569,11 @@ void Sistema::carregarUsuarios() {
 
     ifstream file("usuarios.txt");
 
+    if (file.bad()) {
+        std::clog << "arquivo de dados de usuários não encontrado. inicialização crua." << std::endl;
+        return;
+    }
+
     int howMany, id;
     string nome, email, senha;
 
@@ -572,28 +582,147 @@ void Sistema::carregarUsuarios() {
     while (howMany--) {
         file >> id;
 
-        file.ignore(std::numeric_limits<streamsize>::max(), '\n');
+        file.get();
         std::getline(file, nome);
         std::getline(file, email);
         std::getline(file, senha);
 
-        std::cout << "o id eh " << id << std::endl;
-        std::cout << "o nome eh " << nome << std::endl;
-        std::cout << "o email eh " << email << std::endl;
-        std::cout << "a senha eh " << senha << std::endl;
-        
         usuarios.push_back(new Usuario(nome, email, senha));
     }
 }
 
 void Sistema::carregarServidores() {
 
+    std::clog << "vai carregar os servidores" << std::endl;
 
+    try {
+
+        ifstream file("servidores.txt");
+        ifstream previousFile("usuarios.txt");
+
+        if (previousFile.bad() || file.bad()) {
+            std::clog << "arquivo de dados não encontrados. inicialização crua." << std::endl;
+            return;
+        }
+
+        int numberOfServers, ownerId, numberOfParticipants, participantId;
+        int numberOfChannels;
+        int numberOfMessages, messageOwnerId;
+
+        string serverName, description, inviteCode;
+        string channelName, channelType;
+        string timestamp, content, trash;
+
+        std::clog << "vai começar as leituras" << std::endl;
+
+        file >> numberOfServers;
+        file.get();
+        
+        while (numberOfServers--) {
+
+            std::clog << "início de servidor" << std::endl;
+
+            file >> ownerId; file.get();
+            getline(file, serverName);
+            getline(file, description);
+            getline(file, inviteCode);
+
+            Servidor *newServer = new Servidor(serverName, description, ownerId, inviteCode);
+
+            std::clog << "criou servidor" << std::endl;
+            std::clog << "nome: " << newServer->getNome() << std::endl;
+            std::clog << "descricao: " << newServer->getDescricao() << std::endl;
+            std::clog << "ownerId: " << newServer->getUsuarioDonoId() << std::endl;
+            std::clog << "inviteCode: " << newServer->getCodigoConvite() << std::endl;
+            std::clog << std::endl;
+
+            file >> numberOfParticipants;
+            while (numberOfParticipants--) {
+                file >> participantId;
+                newServer->addParticipant(participantId);
+            }
+
+            std::clog << "adicionou " << newServer->getParticipantesIds().size() << " participantes" << std::endl;
+
+            // CHECKPOINT
+
+            file >> numberOfChannels;
+            while (numberOfChannels--) {
+
+                std::clog << "início de canais" << std::endl;
+
+                // file.ignore(numeric_limits<std::streamsize>::max(), '\n');
+                // file.get();
+
+                // while (!getline(file, channelName));
+                // getline(file, channelName);
+
+                getline(file, trash);
+
+                if (!trash.empty())
+                    channelName = trash;
+                else
+                    getline(file, channelName);
+
+                
+                getline(file, channelType);
+                file >> numberOfMessages;
+
+                std::clog << "trash: " << trash << std::endl;
+                std::clog << "nome antes: *" << channelName << "*" << std::endl;
+                std::clog << "tipo antes: " << channelType << std::endl;
+                std::clog << "msgs antes: " << numberOfMessages << std::endl;
+                std::clog << std::endl;
+
+                Canal *newChannel;
+
+                if (channelType == "TEXTO")
+                    newChannel = new CanalTexto(channelName);
+                else if (channelType == "VOZ")
+                    newChannel = new CanalVoz(channelName);
+
+                std::clog << "criou canal" << std::endl;
+                std::clog << "nome: " << newChannel->getNome() << std::endl;
+                std::clog << "tipo: " << newChannel->getTipo() << std::endl;
+                std::clog << "número msg (deve ser 0): " << newChannel->getMensagens().size() << std::endl;
+
+                // return;
+
+                while (numberOfMessages-- > 0) {
+
+                    std::clog << "início de mensagens" << std::endl;
+
+                    file >> messageOwnerId;
+                    file.get();
+                    getline(file, timestamp);
+                    getline(file, content);
+
+                    std::clog << "ownerId: " << messageOwnerId << std::endl;
+                    std::clog << "timestamp: " << timestamp << std::endl;
+                    std::clog << "content: " << content << std::endl;
+
+                    std::clog << "leu mensagens" << std::endl;
+
+                    newChannel->addMessage(new Mensagem(messageOwnerId, content, timestamp));
+                }
+
+                std::cout << "vai adicionar canal" << std::endl;
+                newServer->addCanal(newChannel);
+            }
+
+            std::cout << "vai adicionar servidor" << std::endl;
+            addServer(newServer);
+            std::cout << "vai inicializar com " << getAllServidores().size() << " servidores" << std::endl;
+        }
+
+    } catch (std::exception &e) {
+        std::cerr << "erro ao tentar carregar servidores: " << e.what() << std::endl;
+    }
 }
 
 void Sistema::carregar() {
     carregarUsuarios();
-    // carregarServidores();
+    carregarServidores();
 }
 
 void Sistema::start() {

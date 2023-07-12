@@ -7,7 +7,7 @@ class Mensagem {
 
   private:
 
-    std::string dataHora; // que tal usar uma entidade de Tempo do C++?
+    std::string dataHora; 
     int enviadaPor;
     std::string conteudo;
 
@@ -16,7 +16,7 @@ class Mensagem {
     // nao faz sentido criar uma mensagem vazia
 
     Mensagem();
-    Mensagem(int enviadaPor, std::string conteudo);
+    Mensagem(int enviadaPor, std::string conteudo, std::string timestamp);
 
     std::string getDataHora();
     void setDataHora(std::string dataHora);

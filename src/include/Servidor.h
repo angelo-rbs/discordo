@@ -20,6 +20,7 @@ class Servidor {
   public:
     Servidor();
     Servidor(std::string nome, int idDono);
+    Servidor(std::string nome, string descricao, int idDono, string codigoConvite);
     ~Servidor();
 
     int getUsuarioDonoId();

@@ -29,6 +29,17 @@ Servidor::Servidor(std::string nome, int idDono) {
 
 }
 
+Servidor::Servidor(std::string nome, string descricao, int idDono, string codigoConvite) {
+
+  this->nome = nome;
+  this->descricao = descricao;
+  this->usuarioDonoId = idDono;
+  this->codigoConvite = codigoConvite;
+  this->canais;
+  this->participantesIds;
+
+}
+
 Servidor::~Servidor() {
 
   for (int i = 0; i < canais.size(); i++)

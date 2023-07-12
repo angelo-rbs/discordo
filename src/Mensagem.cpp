@@ -7,9 +7,12 @@ using std::string;
 
 Mensagem::Mensagem() = default;
 
-Mensagem::Mensagem(int enviadaPor, string conteudo) {
+Mensagem::Mensagem(int enviadaPor, std::string conteudo, std::string timestamp) {
 
-  this->dataHora = currentDateTime();
+  if (timestamp.empty())
+    timestamp = currentDateTime();
+
+  this->dataHora = timestamp;
   this->enviadaPor = enviadaPor;
   this->conteudo = conteudo;
 

@@ -41,6 +41,7 @@ class Sistema {
     Usuario* findUsuarioByServidor(std::string nomeServidor, int idUsuario);
     Canal* findCanal(std::string nome);
     Servidor* getServidorAtual();
+    void addServer(Servidor *toAdd);
 
     bool logado();
     bool servidorDefinido();
