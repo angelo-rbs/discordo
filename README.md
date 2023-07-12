@@ -1,5 +1,5 @@
 # discordo
-Trabalho da 3ª unidade da disciplina Linguagen de Programação I, ministrada no curso de Bacharel em Tecnologia da Informação da UFRN Informação da Universidade Federal do Rio Grande do Norte 
+Trabalho da 3ª unidade da disciplina Linguagem de Programação I, ministrada no curso de Bacharel em Tecnologia da Informação da UFRN Informação da Universidade Federal do Rio Grande do Norte 
 
 # Identificação Pessoal
 
@@ -8,6 +8,21 @@ Preencha os dados abaixo para identificar a autoria do trabalho.
 - Nome: Ângelo Raphael Campelo de Araújo Barbosa
 - Email: angeloraphael1@hotmail.com
 - Turma: Turma 01
+
+# Compilação
+
+Para compilar o programa deve-se, na pasta raiz, criar o Makefile através do software CMake segundo o comando
+
+``cmake -S . -B build``,
+
+que gerará um diretório **build** com os arquivos necessários e suficientes à compilação.
+Dirija-se à pasta build e execute então 
+
+``make``
+
+e o programa será compilado num arquivo único nomeado Discordo. Para executá-lo no sistema operacional Linux siga com o comando
+
+``./Discordo``.
 
 # Acompanhamento da implementação
 
