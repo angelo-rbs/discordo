@@ -81,8 +81,25 @@ class Sistema {
 
     // funcionalidades C1
 
+    private:
+
+    void salvarUsuarios();
+    void salvarServidores();
+
+    public:
+
+    void salvar();
 
     // funcionalidades C2
+
+    private:
+
+    void carregarUsuarios();
+    void carregarServidores();
+
+    public:
+
+    void carregar();
 
 };
 

@@ -15,6 +15,7 @@ class CanalVoz : public Canal {
 
     virtual void addMessage(Mensagem*);
     virtual void listMessages(std::vector<Usuario*> users);
+    virtual vector<Mensagem*> getMensagens();
 
 };
 

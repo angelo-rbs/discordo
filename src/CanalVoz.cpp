@@ -29,3 +29,12 @@ void CanalVoz::listMessages(std::vector<Usuario*> users) {
 
   std::cout << formatMessage(msg, sender) << std::endl;
 }
+
+vector<Mensagem*> CanalVoz::getMensagens() {
+  vector<Mensagem*> msgs;
+
+  if (ultimaMensagem != nullptr)
+    msgs.push_back(ultimaMensagem);
+
+  return msgs;
+}

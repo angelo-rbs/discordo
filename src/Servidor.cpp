@@ -9,7 +9,14 @@
 
 // construtores
 
-Servidor::Servidor() = default;
+Servidor::Servidor() {
+  this->nome = "";
+  this->descricao = "";
+  this->usuarioDonoId = cte::USUARIO_NAO_ENCONTRADO;
+  this->codigoConvite = "";
+  this->canais;
+  this->participantesIds;
+};
 
 Servidor::Servidor(std::string nome, int idDono) {
 
@@ -26,7 +33,6 @@ Servidor::~Servidor() {
 
   for (int i = 0; i < canais.size(); i++)
     delete canais[i];
-
 }
 
 

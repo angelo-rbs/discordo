@@ -29,6 +29,7 @@ class Canal {
     
     virtual void addMessage(Mensagem* mensagem) = 0;
     virtual void listMessages(std::vector<Usuario*> users) = 0;
+    virtual vector<Mensagem*> getMensagens() = 0;
 };
 
 #endif

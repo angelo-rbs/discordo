@@ -7,7 +7,7 @@ CanalTexto::CanalTexto(std::string nome) : Canal(nome) {
 }
 
 std::vector<Mensagem*> CanalTexto::getMensagens() {
-  return this->mensagens;    
+  return mensagens;    
 }
 
 void CanalTexto::addMessage(Mensagem *msg) {
@@ -29,4 +29,3 @@ void CanalTexto::listMessages(std::vector<Usuario*> users) {
     std::cout << formatMessage(msg, sender) << std::endl;
   }
 }
-

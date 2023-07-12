@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <limits>
 
 #include "../infra/Exits.cpp"
 #include "include/Canal.h"
@@ -311,7 +314,12 @@ bool Sistema::enterServer(std::string serverName, std::string givenInviteCode = 
             }
         }
 
-        toEnter->addParticipant(idUsuarioLogado);
+        if (toEnter->addParticipant(idUsuarioLogado))
+            std::cout << "participante adicionado ao servidor" << std::endl;
+        else
+            std::cout << "ERRO AO ADICIONAR PARTICIPANTE" << std::endl;
+
+
         nomeServidorAtual = toEnter->getNome();
 
         std::cout << "entrou no servidor com sucesso" << std::endl;
@@ -338,46 +346,62 @@ void Sistema::listParticipants() {
     Servidor* server = getServidorAtual();
     Usuario* user;
 
-    if (server == nullptr)
-        throw early_exit("não existe servidor atual definido");
+    try {
+        if (server == nullptr)
+            throw early_exit("você não conectado a um servidor");
 
-    std::cout << "----------------------------------------" << std::endl;
-    std::cout << server->getParticipantesIds().size() << " participantes de " << server->getNome() << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << server->getParticipantesIds().size() << " participantes de " << server->getNome() << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
 
-    for (int id : server->getParticipantesIds()) {
-        user = findUsuarioById(id);
-        std::cout << user->getNome() << std::endl;
+        for (int id : server->getParticipantesIds()) {
+            user = findUsuarioById(id);
+            std::cout << user->getNome() << std::endl;
+        }
+
+        std::cout << "----------------------------------------" << std::endl;
+    } catch (early_exit &e) {
+        std::cout << e.msg << std::endl;
     }
-
-    std::cout << "----------------------------------------" << std::endl;
 }
 
 void Sistema::listChannels() {
-    Servidor* servidor = getServidorAtual();
 
-    std::vector<Canal*> canaisTexto;
-    std::vector<Canal*> canaisVoz;
+    try {
 
-    for (Canal* canal : servidor->getCanais()) {
-        if (canal->getTipo() == cte::texto)
-            canaisTexto.push_back(canal);
-        else if (canal->getTipo() == cte::voz)
-            canaisVoz.push_back(canal);
+        std::clog << "entrou no try do listChannels" << std::endl;
+        Servidor* servidor = getServidorAtual();
+        if (servidor == nullptr)
+            throw early_exit("você não está conectado a um servidor");
+
+        std::vector<Canal*> canaisTexto;
+        std::vector<Canal*> canaisVoz;
+
+        std::clog << "servidor conectado: " << servidor->getNome() << std::endl;
+
+        for (Canal* canal : servidor->getCanais()) {
+            if (canal->getTipo() == cte::texto)
+                canaisTexto.push_back(canal);
+            else if (canal->getTipo() == cte::voz)
+                canaisVoz.push_back(canal);
+        }
+
+        std::cout << "servidor \"" << servidor->getNome() << "\"" << std::endl;
+        std::cout << servidor->getCanais().size() << " canais totais" << std::endl;
+
+        std::cout << "#canais de texto (" << canaisTexto.size() << ")" << std::endl;
+        for (Canal* canal : canaisTexto)
+            std::cout << canal->getNome() << std::endl;
+
+        std::cout << "#canais de voz (" << canaisVoz.size() << ")" << std::endl;
+        for (Canal* canal : canaisVoz)
+            std::cout << canal->getNome() << std::endl;
+
+        std::cout << std::endl;
+
+    } catch (early_exit &e) {
+        std::cerr << e.msg << std::endl;
     }
-
-    std::cout << "servidor \"" << servidor->getNome() << "\"" << std::endl;
-    std::cout << servidor->getCanais().size() << " canais totais" << std::endl;
-
-    std::cout << "#canais de texto (" << canaisTexto.size() << ")" << std::endl;
-    for (Canal* canal : canaisTexto)
-        std::cout << canal->getNome() << std::endl;
-
-    std::cout << "#canais de voz (" << canaisVoz.size() << ")" << std::endl;
-    for (Canal* canal : canaisVoz)
-        std::cout << canal->getNome() << std::endl;
-
-    std::cout << std::endl;
 }
 
 bool Sistema::createChannel(std::string nome, std::string tipo) {
@@ -386,7 +410,7 @@ bool Sistema::createChannel(std::string nome, std::string tipo) {
     try {
         Servidor* atual = getServidorAtual();
         if (atual == nullptr)
-            throw early_exit("servidor não encontrado");
+            throw early_exit("você não está conectado a um servidor");
 
         // verifica existência
 
@@ -467,16 +491,122 @@ void Sistema::listMessages() {
     }
 }
 
+void Sistema::salvarUsuarios() {
+    // std::cout << "entrou no salvar usuários" << std::endl;
+
+    vector<Usuario*> users = usuarios;
+    ofstream file("usuarios.txt");
+
+    file << users.size() << std::endl;
+ 
+    for (Usuario *user : users) {
+        file << user->getId() << std::endl;
+        file << user->getNome() << std::endl;
+        file << user->getEmail() << std::endl;
+        file << user->getSenha() << std::endl;
+    }
+}
+
+void Sistema::salvarServidores() {
+    // std::clog << "entrou no salvar servidores" << std::endl;
+
+    vector<Servidor*> servers = servidores;
+    
+    ofstream file("servidores.txt");
+
+    file << servers.size() << std::endl;
+
+    for (Servidor *server : servers) {
+        file << server->getUsuarioDonoId() << std::endl;
+        file << server->getNome() << std::endl;
+        file << server->getDescricao() << std::endl;
+        file << server->getCodigoConvite() << std::endl;
+        file << server->getParticipantesIds().size() << std::endl;
+
+        for  (int id : server->getParticipantesIds())
+            file << id << std::endl;
+
+        file << server->getCanais().size() << std::endl;
+        
+        for (Canal *channel : server->getCanais()) {
+
+            file << channel->getNome() << std::endl;
+
+            if (channel->getTipo() == cte::texto)
+                file << "TEXTO" << std::endl;
+            else if (channel->getTipo() == cte::voz)
+                file << "VOZ" << std::endl;
+
+            file << "quantMensagens: " << channel->getMensagens().size() << std::endl;
+
+            for (Mensagem *message : channel->getMensagens()) {
+                file << message->getEnviadaPor() << std::endl;
+                file << message->getDataHora() << std::endl;
+                file << message->getConteudo() << std::endl;
+            }
+        }
+    }
+
+    // std::cout << "saiu do salvar servidores" << std::endl;
+}
+
+void Sistema::salvar() {
+    try {
+        salvarUsuarios();
+        salvarServidores();
+    } catch (std::exception &e) {
+        cerr << "erro ao salvar: " << e.what() << std::endl;
+        return;
+    }
+}
+
+void Sistema::carregarUsuarios() {
+
+    ifstream file("usuarios.txt");
+
+    int howMany, id;
+    string nome, email, senha;
+
+    file >> howMany;
+
+    while (howMany--) {
+        file >> id;
+
+        file.ignore(std::numeric_limits<streamsize>::max(), '\n');
+        std::getline(file, nome);
+        std::getline(file, email);
+        std::getline(file, senha);
+
+        std::cout << "o id eh " << id << std::endl;
+        std::cout << "o nome eh " << nome << std::endl;
+        std::cout << "o email eh " << email << std::endl;
+        std::cout << "a senha eh " << senha << std::endl;
+        
+        usuarios.push_back(new Usuario(nome, email, senha));
+    }
+}
+
+void Sistema::carregarServidores() {
+
+
+}
+
+void Sistema::carregar() {
+    carregarUsuarios();
+    // carregarServidores();
+}
+
 void Sistema::start() {
     Parser* p = new Parser();
 
     try {
         std::string commandLine, nome, email, senha, desc, codigo, command, tipo, mensagem;
-        bool parserOk;
+        bool changeCommand = false;
         int exit_flag = 0;
 
         while (!exit_flag) {
             getline(std::cin, commandLine);
+            changeCommand = false;
 
             if (!p->parse(commandLine))
                 continue;
@@ -495,6 +625,7 @@ void Sistema::start() {
                 senha = p->getSimpleArg(1);
                 nome = p->getSpacedArg();
 
+                changeCommand = true;
                 createUser(email, senha, nome);
             } else if (command == cte::LOGIN) {
                 email = p->getSimpleArg(0);
@@ -506,6 +637,8 @@ void Sistema::start() {
 
             } else if (command == cte::CRIAR_SERVIDOR) {
                 nome = p->getSimpleArg(0);
+
+                changeCommand = true;
                 createServer(nome);
             } else if (command == cte::LISTAR_SERVIDORES) {
                 listServers();
@@ -513,22 +646,28 @@ void Sistema::start() {
                 nome = p->getSimpleArg(0);
                 desc = p->getSpacedArg();
 
+                changeCommand = true;
                 setServerDescription(nome, desc);
             } else if (command == cte::MUDAR_CONVITE_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 codigo = p->getSpacedArg();
 
+                changeCommand = true;
                 setInviteCode(nome, codigo);
             } else if (command == cte::REMOVER_SERVIDOR) {
                 nome = p->getSimpleArg(0);
 
+                changeCommand = true;
                 removeServer(nome);
             } else if (command == cte::ENTRAR_SERVIDOR) {
                 nome = p->getSimpleArg(0);
                 codigo = p->getSpacedArg();
 
+                changeCommand = true;
                 enterServer(nome, codigo);
             } else if (command == cte::SAIR_SERVIDOR) {
+
+                changeCommand = true;
                 leaveServer();
             } else if (command == cte::LISTAR_PARTICIPANTES) {
                 listParticipants();
@@ -538,16 +677,21 @@ void Sistema::start() {
                 nome = p->getSimpleArg(0);
                 tipo = p->getSimpleArg(1);
 
+                changeCommand = true;
                 createChannel(nome, tipo);
+
+                std::clog << "criou o canal" << std::endl;
             } else if (command == cte::ENTRAR_CANAL) {
                 nome = p->getSimpleArg(0);
 
+                changeCommand = true;
                 enterChannel(nome);
             } else if (command == cte::SAIR_CANAL) {
                 leaveChannel();
             } else if (command == cte::ENVIAR_MENSAGEM) {
                 mensagem = p->getSpacedArg();
 
+                changeCommand = true;
                 sendMessage(mensagem);
             } else if (command == cte::LISTAR_MENSAGENS) {
 
@@ -556,6 +700,10 @@ void Sistema::start() {
 
                 std::cout << "comando não reconhecido" << std::endl;
             }
+
+            // std::cout << "vai tentar salvar ao fim do comando" << std::endl;
+            if (changeCommand) salvar();
+            // std::cout << "salvou ao fim do comando" << std::endl;
         }
 
         delete p;

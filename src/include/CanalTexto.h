@@ -14,10 +14,10 @@ class CanalTexto : public Canal {
 
   public:
     CanalTexto(std::string nome);
-    std::vector<Mensagem*> getMensagens();
 
     virtual void addMessage(Mensagem* mensagem);
     virtual void listMessages(std::vector<Usuario*> users);
+    virtual vector<Mensagem*> getMensagens();
 
 };
 

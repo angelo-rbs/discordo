@@ -16,7 +16,20 @@ int main()
   try {
     
     Sistema *sistema = new Sistema();
+
+    try {
+      sistema->carregar();
+    } catch (std::exception &e) {
+      std::cerr << "erro ao tentar carregar dados na inicialização" << std::endl;
+    }
+
     sistema->start();
+
+    try {
+      sistema->salvar();
+    } catch (std::exception &e) {
+      std::cerr << "erro ao salvar no encerramento" << e.what() << std::endl;
+    }
 
     delete sistema;    
 
